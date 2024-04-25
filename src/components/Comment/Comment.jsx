@@ -10,7 +10,7 @@ const Comment = ({ createdat, username, profilepic, text }) => {
                     <Text fontWeight={"bold"} fontSize={12}>
                         {username}
                     </Text>
-                    <Text fontSize={14}>
+                    <Text fontSize={14} >
                         {text}
                     </Text>
                 </Flex>

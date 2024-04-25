@@ -29,7 +29,7 @@ const ProfileHeader = () => {
                     alignItems={"center"}
                     w={"full"}
                 >
-                    <Text fontSize={{ base: "sm", md: "lg" }}>rocky991</Text>
+                    <Text fontSize={{ base: "sm", md: "lg" }}>{userProfile.username}</Text>
                     {visitingOwnProfileandAuth && <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
                         <Button
                             bg={"white"}

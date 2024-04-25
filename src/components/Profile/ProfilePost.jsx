@@ -1,13 +1,20 @@
-import { Flex, GridItem, Text, Image, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Box, Avatar, Divider, VStack } from '@chakra-ui/react'
-import React from 'react'
+import { Flex, GridItem, Text, Image, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Box, Avatar, Divider, VStack, Button } from '@chakra-ui/react'
+import React, { useState } from 'react'
 import { AiFillHeart } from 'react-icons/ai'
 import { FaComment } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import Comment from '../Comment/Comment'
 import PostFooter from '../FeedPosts/PostFooter'
+import useUserProfileStore from '../../store/userProfileStore'
+import useAuthStore from '../../store/authStore'
+import useShowToast from '../../hooks/useShowToast'
+import useDeletePost from '../../hooks/useDeletePost'
 
-const ProfilePost = ({ src }) => {
+const ProfilePost = ({ post }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const userProfile = useUserProfileStore(state => state.userProfile);
+    const authUser = useAuthStore(state => state.user);
+    const { isDeleting, handleDeletePost } = useDeletePost();
 
     return (
         <>
@@ -41,15 +48,15 @@ const ProfilePost = ({ src }) => {
                     >
                         <Flex>
                             <AiFillHeart size={20} />
-                            <Text fontWeight={"bold"} ml={2}>7</Text>
+                            <Text fontWeight={"bold"} ml={2}>{post.likes.length}</Text>
                         </Flex>
                         <Flex>
                             <FaComment size={20} />
-                            <Text fontWeight={"bold"} ml={2}>7</Text>
+                            <Text fontWeight={"bold"} ml={2}>{post.comments.length}</Text>
                         </Flex>
                     </Flex>
                 </Flex>
-                <Image src={src} alt='Profile post' w={"100%"} h={"100%"} objectFit={"cover"} />
+                <Image src={post.imageUrl} alt='Profile post' w={"100%"} h={"100%"} objectFit={"cover"} />
             </GridItem>
             <Modal isOpen={isOpen} onClose={onClose}
                 isCentered={true}
@@ -69,15 +76,17 @@ const ProfilePost = ({ src }) => {
                             w={{ base: "90%", sm: "70%", md: "full" }}
                             mx={"auto"}
                         >
-                            <Box
+                            <Flex
                                 borderRadius={4}
                                 overflow={"hidden"}
                                 border={"1px solid"}
                                 borderColor={"whiteAlpha.300"}
                                 flex={1.5}
+                                alignItems={"center"}
+                                justifyContent={"center"}
                             >
-                                <Image src={src} alt='Profile Post' />
-                            </Box>
+                                <Image src={post.imageUrl} alt='Profile Post' />
+                            </Flex>
                             <Flex flex={1}
                                 flexDir={"column"}
                                 px={10}
@@ -86,16 +95,22 @@ const ProfilePost = ({ src }) => {
                                 <Flex alignContent={"center"} justifyContent={"space-between"}>
 
                                     <Flex alignItems={"center"} gap={4}>
-                                        <Avatar src='/img1.png' size={"sm"} name='Rocky991' />
-                                        <Text fontWeight={"bold"} fontSize={12}>rocky991</Text>
+                                        <Avatar src={userProfile.profilePicUrl} size={"sm"} name={userProfile.username} />
+                                        <Text fontWeight={"bold"} fontSize={12}>{userProfile.username}</Text>
                                     </Flex>
-                                    <Box
-                                        _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
-                                        borderRadius={4}
-                                        p={1}
-                                    >
-                                        <MdDelete size={20} cursor={"pointer"} />
-                                    </Box>
+                                    {authUser.uid === userProfile.uid && (
+                                        <Button
+                                            size={"sm"}
+                                            bg={"transparent"}
+                                            _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                                            borderRadius={4}
+                                            p={1}
+                                            onClick={() => handleDeletePost(post)}
+                                            isLoading={isDeleting}
+                                        >
+                                            <MdDelete size={20} cursor={"pointer"} />
+                                        </Button>
+                                    )}
                                 </Flex>
                                 <Divider my={4} bg={"gray.500"} />
                                 <VStack w={"full"}
@@ -104,22 +119,10 @@ const ProfilePost = ({ src }) => {
                                     overflowY={"auto"}
                                 >
                                     <Comment
-                                        createdat="1d ago"
-                                        username="bindu"
-                                        profilepic="/img2.png"
-                                        text={"The G.O.A.T"}
-                                    />
-                                    <Comment
-                                        createdat="12h ago"
-                                        username="sai"
-                                        profilepic="/img3.png"
-                                        text={"The G.O.A.T"}
-                                    />
-                                    <Comment
-                                        createdat="3h ago"
-                                        username="pavan"
-                                        profilepic="/img4.png"
-                                        text={"The G.O.A.T"}
+                                        createdat={"1d ago"}
+                                        username={userProfile.username}
+                                        profilepic={userProfile.profilePicUrl}
+                                        text={post.caption}
                                     />
                                 </VStack>
                                 <Divider my={4} bg={"gray.800"} />

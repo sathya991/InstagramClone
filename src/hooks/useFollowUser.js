@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useAuthStore from '../store/authStore';
 import useUserProfileStore from '../store/userProfileStore';
 import useShowToast from './useShowToast';
@@ -28,10 +28,12 @@ const useFollowUser = (uid) => {
                     ...user,
                     following: user.following.filter(id => id !== uid)
                 })
-                setUserProfile({
-                    ...userProfile,
-                    followers: userProfile.followers.filter(id => id !== user.uid)
-                })
+                if (userProfile) {
+                    setUserProfile({
+                        ...userProfile,
+                        followers: userProfile.followers.filter(id => id !== user.uid)
+                    })
+                }
                 localStorage.setItem('user-info', JSON.stringify({
                     ...user,
                     following: user.following.filter(id => id !== uid)
