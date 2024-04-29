@@ -3,12 +3,12 @@ import React, { useState } from 'react'
 import { AiFillHeart } from 'react-icons/ai'
 import { FaComment } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
-import Comment from '../Comment/Comment'
 import PostFooter from '../FeedPosts/PostFooter'
 import useUserProfileStore from '../../store/userProfileStore'
 import useAuthStore from '../../store/authStore'
-import useShowToast from '../../hooks/useShowToast'
 import useDeletePost from '../../hooks/useDeletePost'
+import Comment from '../Comment/Comment'
+import Caption from '../Comment/Caption'
 
 const ProfilePost = ({ post }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -118,15 +118,14 @@ const ProfilePost = ({ post }) => {
                                     maxH={"350px"}
                                     overflowY={"auto"}
                                 >
-                                    <Comment
-                                        createdat={"1d ago"}
-                                        username={userProfile.username}
-                                        profilepic={userProfile.profilePicUrl}
-                                        text={post.caption}
-                                    />
+                                    {post.caption && <Caption post={post} />}
+
+                                    {post.comments.map(comment => (
+                                        <Comment key={comment.id} comment={comment} />
+                                    ))}
                                 </VStack>
                                 <Divider my={4} bg={"gray.800"} />
-                                <PostFooter isProfilePage={true} />
+                                <PostFooter isProfilePage={true} post={post} />
                             </Flex>
                         </Flex>
                     </ModalBody>
